@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-
+from sys import argv
 
 def make_plot(csv_file):
 
@@ -20,7 +20,7 @@ def make_plot(csv_file):
     X = res[:, 1]
     Y = res[:, 0]
     Z = res[:, 2]
-    Z /= max(res[:, 2])
+    # Z /= max(res[:, 2])
 
     # Plot the surface.
     ax.plot_trisurf(X, Y, Z, cmap='viridis')
@@ -33,4 +33,9 @@ def make_plot(csv_file):
     plt.show()
 
 if __name__ == "__main__":
-    make_plot("vec_perf.csv")
+    try:
+        save_file = argv[1]
+    except IndexError:
+        save_file = "vec_perf.csv"
+
+    make_plot(save_file)

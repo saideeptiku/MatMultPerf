@@ -43,6 +43,43 @@ def do_vec_mult(vec_size: int, depth: int, repeat: int):
     
 
 
+def do_mat_mult(mat_size: int, depth: int, repeat: int):
+    """
+    multiply sqaure matrices
+    """
+
+    # vector with random values
+    mat = np.random.rand(depth, mat_size, mat_size)
+
+    # store results here
+    times = []
+
+    # repeat the experiment 
+    for _ in range(repeat):
+        # do vector multiplications
+        j = 0
+        st = time()
+        for i in range(1, depth):
+            # start time
+
+            # compute
+            np.dot(mat[j, :, :], mat[i, :, :])
+            
+            # update vector pointer
+            j += 1
+
+        # end time
+        et = time()
+
+        # time passed/elapsed
+        tp = et - st
+
+        times.append(tp)
+
+    return times
+    
+
+
 def run_perf(vector_range, depth_range, repeat, pbar_disable=False):
     """
     runs perf over range described above
@@ -63,7 +100,7 @@ def run_perf(vector_range, depth_range, repeat, pbar_disable=False):
     for dt in depth_range:
         for vs in vector_range:
 
-            times = do_vec_mult(vs, dt, repeat + warm_up)
+            times = do_mat_mult(vs, dt, repeat + warm_up)
 
             # ignore warm up
             avg_time = sum(times[warm_up:])/len(times[warm_up:])
@@ -77,14 +114,16 @@ def run_perf(vector_range, depth_range, repeat, pbar_disable=False):
             # update pbar
             pbar.update()
 
+    pbar.close()
     return results
 
 
 if __name__ == "__main__":
 
-    vect_range = range(1, 1000 + 1, 10)
+    vect_range = range(1, 300 + 1, 10)
     depth_range = range(2, 10 + 1, 1)
 
+    print(argv)
 
     results = run_perf(vect_range, depth_range, 1000)
 
