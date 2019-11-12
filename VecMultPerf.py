@@ -21,37 +21,37 @@ def do_vec_mult(vec_size: int, depth: int, repeat: int):
     for _ in range(repeat):
         # do vector multiplications
         j = 0
+        st = time()
         for i in range(1, depth):
             # start time
-            st = time()
 
             # compute
             np.dot(vec[j, :], vec[i, :].T)
             
-            # end time
-            et = time()
-
             # update vector pointer
             j += 1
 
-            # time passed/elapsed
-            tp = et - st
+        # end time
+        et = time()
 
-            times.append(tp)
+        # time passed/elapsed
+        tp = et - st
+
+        times.append(tp)
 
     return times
     
 
 
-def run_perf(min_vec, max_vec, min_depth, max_depth, repeat, pbar_disable=False):
+def run_perf(vector_range, depth_range, repeat, pbar_disable=False):
     """
     runs perf over range described above
     """
     # ignore these times
-    warm_up = 50
+    warm_up = 100
 
     # number of results
-    num_results = (max_vec - min_vec + 1) * (max_depth - min_depth + 1)
+    num_results = len(list(vector_range)) * len(list(depth_range))
 
     # results
     results = np.zeros((num_results, 3))
@@ -60,8 +60,8 @@ def run_perf(min_vec, max_vec, min_depth, max_depth, repeat, pbar_disable=False)
     pbar = tqdm(total=num_results, disable=pbar_disable)
 
     row = 0
-    for dt in range(min_depth, max_depth + 1):
-        for vs in range(min_vec, max_vec + 1):
+    for dt in depth_range:
+        for vs in vector_range:
 
             times = do_vec_mult(vs, dt, repeat + warm_up)
 
@@ -81,7 +81,12 @@ def run_perf(min_vec, max_vec, min_depth, max_depth, repeat, pbar_disable=False)
 
 
 if __name__ == "__main__":
-    results = run_perf(2, 500, 2, 10, 100)
+
+    vect_range = range(1, 1000 + 1, 10)
+    depth_range = range(2, 10 + 1, 1)
+
+
+    results = run_perf(vect_range, depth_range, 1000)
 
     try:
         save_file = argv[1]
